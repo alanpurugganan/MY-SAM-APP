@@ -27,49 +27,41 @@ Globals:
       Variables:
         LocalIp: 192.168.1.22
         LocalDynamoDbPort: 8000
+        TableName: NinjaDudsMainTable__Local__
+        EnvType: __Local__
+        
 
-#===============
-#LOCAL RESOURCES
-#===============
+#ALWAYS ADD NEW HANDLERS AT THE TOP OF RESOURCES SO THAT CODELENS WILL SEE IT AND OFFER DEBUGGING OPTIONS
 Resources:
-  HelloWorldFunction__Local__:
+  HelloWorld2__Local__:
+      Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+      Properties:
+        CodeUri: hello-world/
+        Handler: app.helloWorld2
+        Runtime: nodejs12.x
+        Events:
+          HelloWorld__Local__:
+            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+            Properties:
+              Path: /hello-world-2
+              Method: get
+
+
+  HelloWorld__Local__:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Condition: CreateLocalResources
     Properties:
       CodeUri: hello-world/
-      Handler: app.lambdaHandler
+      Handler: app.helloWorld
       Runtime: nodejs12.x
-      Environment:
-        Variables:
-          TableName: NinjaDudsMainTableLocal
-          EnvType: Local
       Events:
         HelloWorld__Local__:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /hello-world
             Method: get
 
-  #===============
-  #PROD RESOURCES
-  #===============
-  # HelloWorldFunction__Prod__:
-  #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-  #   #Condition: CreateProdResources
-  #   Properties:
-  #     CodeUri: hello-world/
-  #     Environment:
-  #       Variables:
-  #         TableName: NinjaDudsMainTableProd
-  #         EnvType: Prod
-  #     Handler: app.lambdaHandler
-  #     Runtime: nodejs12.x
-  #     Events:
-  #       HelloWorld__Prod__:
-  #         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-  #         Properties:
-  #           Path: /hello
-  #           Method: get
+    
+
 
 # Outputs:
 #   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
