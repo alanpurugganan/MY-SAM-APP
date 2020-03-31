@@ -5,7 +5,7 @@ let AWS = require("aws-sdk");
 let response;
 let dynamodb = new AWS.DynamoDB();
 
-if(process.env.EnvType == '__Local__'){
+if(process.env.EnvType == 'xxLocalxx'){
     let config = {
       "region":"local",
       "endpoint": `http://${process.env.LocalIp}:${process.env.LocalDynamoDbPort}`

@@ -5,6 +5,9 @@ Description: >
 
   Sample SAM Template for my-sam-app-nodejs
 
+#create a s3 bucket
+#aws s3 mb s3://bucket-name
+
 #PARAMETERS DO NOT WORK (YET!)
 # Parameters: 
 #   EnvTypeParam: 
@@ -27,34 +30,34 @@ Globals:
       Variables:
         LocalIp: 192.168.1.22
         LocalDynamoDbPort: 8000
-        TableName: NinjaDudsMainTable__Local__
-        EnvType: __Local__
+        TableName: NinjaDudsMainTablexxLocalxx
+        EnvType: xxLocalxx
         
 
 #ALWAYS ADD NEW HANDLERS AT THE TOP OF RESOURCES SO THAT CODELENS WILL SEE IT AND OFFER DEBUGGING OPTIONS
 Resources:
-  HelloWorld2__Local__:
+  HelloWorld2xxLocalxx:
       Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
       Properties:
         CodeUri: hello-world/
         Handler: app.helloWorld2
         Runtime: nodejs12.x
         Events:
-          HelloWorld__Local__:
+          HelloWorldxxProd:
             Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
             Properties:
               Path: /hello-world-2
               Method: get
 
 
-  HelloWorld__Local__:
+  HelloWorldxxLocalxx:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: hello-world/
       Handler: app.helloWorld
       Runtime: nodejs12.x
       Events:
-        HelloWorld__Local__:
+        HelloWorldxxLocalxx:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello-world
@@ -67,12 +70,12 @@ Resources:
 #   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
 #   # Find out more about other implicit resources you can reference within SAM
 #   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-#   HelloWorldApi__Local__:
+#   HelloWorldApi__Prod__:
 #     Condition: CreateLocalResources
 #     Description: "API Gateway endpoint URL"
 #     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/hello/"
-#   HelloWorldFunction__Local__:
+#   HelloWorldFunction__Prod__:
 #     Condition: CreateLocalResources
 #     Description: "Hello World Lambda Function ARN"
-#     Value: !GetAtt HelloWorldFunction__Local__.Arn
+#     Value: !GetAtt HelloWorldFunction__Prod__.Arn
   
