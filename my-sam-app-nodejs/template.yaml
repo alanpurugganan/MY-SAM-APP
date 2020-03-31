@@ -4,36 +4,83 @@ Description: >
   my-sam-app-nodejs
 
   Sample SAM Template for my-sam-app-nodejs
+
+#PARAMETERS DO NOT WORK (YET!)
+# Parameters: 
+#   EnvTypeParam: 
+#     Type: String
+#     Default: Local
+#     AllowedValues: [Local, Dev, Stage, Prod]
+#     Description: Enter Local, Dev, Stage, Prod. Default is Local.
+
+# Conditions: 
+#   CreateLocalResources: !Equals [ !Ref EnvTypeParam, Local ]
+#   CreateStageResources: !Equals [ !Ref EnvTypeParam, Stage ]
+#   CreateProdResources: !Equals [ !Ref EnvTypeParam, Prod ]
+
   
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
+    Environment:
+      Variables:
+        LocalIp: 192.168.1.22
+        LocalDynamoDbPort: 8000
 
+#===============
+#LOCAL RESOURCES
+#===============
 Resources:
-  HelloWorldFunction:
+  HelloWorldFunction__Local__:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Condition: CreateLocalResources
     Properties:
       CodeUri: hello-world/
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TableName: NinjaDudsMainTableLocal
+          EnvType: Local
       Events:
-        HelloWorld:
+        HelloWorld__Local__:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello
             Method: get
 
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  #===============
+  #PROD RESOURCES
+  #===============
+  # HelloWorldFunction__Prod__:
+  #   Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  #   #Condition: CreateProdResources
+  #   Properties:
+  #     CodeUri: hello-world/
+  #     Environment:
+  #       Variables:
+  #         TableName: NinjaDudsMainTableProd
+  #         EnvType: Prod
+  #     Handler: app.lambdaHandler
+  #     Runtime: nodejs12.x
+  #     Events:
+  #       HelloWorld__Prod__:
+  #         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+  #         Properties:
+  #           Path: /hello
+  #           Method: get
+
+# Outputs:
+#   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+#   # Find out more about other implicit resources you can reference within SAM
+#   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+#   HelloWorldApi__Local__:
+#     Condition: CreateLocalResources
+#     Description: "API Gateway endpoint URL"
+#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/hello/"
+#   HelloWorldFunction__Local__:
+#     Condition: CreateLocalResources
+#     Description: "Hello World Lambda Function ARN"
+#     Value: !GetAtt HelloWorldFunction__Local__.Arn
+  

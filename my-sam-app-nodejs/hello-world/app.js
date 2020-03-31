@@ -1,46 +1,32 @@
 
 // const axios = require('axios')
 // const url = 'http://checkip.amazonaws.com/';
-var AWS = require("aws-sdk");
+let AWS = require("aws-sdk");
 let response;
+let dynamodb = new AWS.DynamoDB();
 
-//added a comment
-//added a new comment
+if(process.env.EnvType == 'Local'){
+    let config = {
+      "region":"local",
+      "endpoint": `http://${process.env.LocalIp}:${process.env.LocalDynamoDbPort}`
+    };
 
+    dynamodb = new AWS.DynamoDB(config);
+}
 
-/**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Context doc: https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html 
- * @param {Object} context
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns {Object} object - API Gateway Lambda Proxy Output Format
- * 
- */
 exports.lambdaHandler = async (event, context) => {
     try {
         // const ret = await axios(url);
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
-                message: 'hello world2',
+                message: `hello world2 ${process.env.EnvType}`
                 // location: ret.data.trim()
             })
         }
 
-        var config = {
-              "region":"local",
-            "endpoint": "http://192.168.1.22:8000"
-        };
-        
-        var dynamodb = new AWS.DynamoDB(config);
-       
-
-        var table = "NinjaDudsMainTable";
-        var params = {
+        let table = process.env.TableName;
+        let params = {
             TableName: table,
             Key: {
                 'PK': {S:"alan.purugganan@gmail.com"},
@@ -48,10 +34,8 @@ exports.lambdaHandler = async (event, context) => {
             }
         };
 
-        var result = await dynamodb.getItem(params).promise()
+        let result = await dynamodb.getItem(params).promise()
         console.log(JSON.stringify(result))
-
-
 
     } catch (err) {
         console.log(err);
